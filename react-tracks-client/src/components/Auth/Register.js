@@ -19,15 +19,23 @@ import Slide from "@material-ui/core/Slide";
 import Gavel from "@material-ui/icons/Gavel";
 import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
 
-const Register = ({ classes }) => {
+function Transition(props) {
+  return <Slide direction="up" {...props}/>
+
+}
+
+const Register = ({ classes, setNewUser }) => {
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [open, setOpen] = useState(false)
 
-  const handleSubmit = async (event, createUser) => {
+  const handleSubmit = (event, createUser) => {
     event.preventDefault()
-    const res = await createUser()
-    console.log(res)
+    createUser()
+    // console.log(res)
+    // after the answer come back
+    //setOpen(true)
   }
 
   return (
@@ -40,9 +48,14 @@ const Register = ({ classes }) => {
           Register
         </Typography>
 
-        <Mutation mutation={REGISTER_MUTATION}
+        <Mutation 
+          mutation={REGISTER_MUTATION}
           variables={{
             username, email, password
+          }}
+          onCompleted={data => {
+            console.log({ data })
+            setOpen(true)
           }}
         >
           {
@@ -67,14 +80,47 @@ const Register = ({ classes }) => {
                     </InputLabel>
                     <Input id="password" onChange={ event => setPassword(event.target.value) }/>
                   </FormControl>
-                  <Button type="submit" fullWidth variant="contained" color="secondary" className={classes.submit}>Register</Button>
-                  <Button color="primary" variant="outlined" fullWidth>Previous user? Log in here</Button>
+                  <Button 
+                    type="submit" 
+                    fullWidth 
+                    variant="contained" 
+                    color="secondary" 
+                    className={classes.submit}
+                    disabled={loading || !username.trim() || !email.trim() || !password.trim() }
+                  >
+                      {loading ? "Registering..." : "Register"}
+                  </Button>
+                  <Button color="primary" variant="outlined" fullWidth onClick={() => setNewUser(false)}>Previous user? Log in here</Button>
+                  
+                  {/* error handling */}
+                  
+                  { error && <div>Error</div> }
                 </form>
               )
             }
           }
         </Mutation>
       </Paper>
+
+      {/* Success dialo area */}
+      <Dialog
+        open={open}
+        disableBackdropClick={true}
+        TransitionComponent={Transition}
+      >
+        <DialogTitle>
+          <VerifiedUserTwoTone className={classes.icon}/>
+          New Account
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>User successfully created!</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color="primary" tariant="contained" onClick={ () => setNewUser(false) }>
+            Login
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
