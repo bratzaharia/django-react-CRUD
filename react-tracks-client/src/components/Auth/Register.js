@@ -19,6 +19,8 @@ import Slide from "@material-ui/core/Slide";
 import Gavel from "@material-ui/icons/Gavel";
 import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
 
+import Error from "./../Shared/Error"
+
 function Transition(props) {
   return <Slide direction="up" {...props}/>
 
@@ -72,13 +74,13 @@ const Register = ({ classes, setNewUser }) => {
                     <InputLabel htmlFor="email">
                       Email
                     </InputLabel>
-                    <Input id="email" onChange={ event => setEmail(event.target.value) }/>
+                    <Input id="email" type="email" onChange={ event => setEmail(event.target.value) }/>
                   </FormControl>
                   <FormControl margin="normal" required fullWidth>
                     <InputLabel htmlFor="password">
                       Password
                     </InputLabel>
-                    <Input id="password" onChange={ event => setPassword(event.target.value) }/>
+                    <Input id="password" type="password" onChange={ event => setPassword(event.target.value) }/>
                   </FormControl>
                   <Button 
                     type="submit" 
@@ -94,7 +96,7 @@ const Register = ({ classes, setNewUser }) => {
                   
                   {/* error handling */}
                   
-                  { error && <div>Error</div> }
+                  { error && <Error error={error} /> }
                 </form>
               )
             }
